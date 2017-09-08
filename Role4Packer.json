@@ -1,0 +1,49 @@
+{
+	"AWSTemplateFormatVersion" : "2010-09-09",
+	"Description" : "This is for testing the policy creation",
+	"Parameters" : { 
+		"policyname" : {
+			"Type" : "String",
+			"Description" : "Give a Name to policy" 
+		},
+		"rolename" : {
+			"Type" : "String",
+			"Description" : "Put a name to group"
+		}
+	},
+	"Resources" : {
+		"roleName" :{
+			"Type" : "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": { "Ref" : "rolename" },
+				  "AssumeRolePolicyDocument": {
+            "Version" : "2012-10-17",
+            "Statement": [ {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [ "ec2.amazonaws.com" ]
+                },
+                "Action": [ "sts:AssumeRole" ]
+          } ]
+        }
+			}
+		},
+		"Cpolicyname" : {
+			"Type" : "AWS::IAM::Policy",
+			"Properties" : {
+				"PolicyName" : { "Ref" : "policyname" },
+				"PolicyDocument" : {
+			  		"Statement": [
+    					{
+      						"Sid": "Stmt1504879834381",
+      						"Action": "ec2:*",
+      						"Effect": "Allow",
+      						"Resource": "*"
+    					}
+  					]
+				},
+				"Roles" : [{ "Ref" : "roleName" }]
+			}
+		}
+	}
+}
