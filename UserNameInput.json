@@ -1,0 +1,52 @@
+{
+	"AWSTemplateFormatVersion" : "2010-09-09",
+	"Description" : "This is for testing the user creation",
+	"Parameters" : {
+		"Password": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "New account password",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "ConstraintDescription" : "The password must be between 1 and 41 characters"
+    },
+  "username": {
+  	"Type": "String",
+  	"Description" : "New AWS User Name"
+    }
+  },
+  "Resources" : {
+    "CFNUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "LoginProfile": {
+          "Password": { "Ref" : "Password" }
+        },
+        "UserName" : { "Ref" : "username" }
+      }
+    },
+    "Users" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "Properties" : {
+        "GroupName": "Admin",
+        "Users" : [ { "Ref" : "CFNUser" } ]
+      }
+    },
+    "CFNKeys" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : { "Ref": "CFNUser" }
+      }
+    }
+  },
+  "Outputs" : {
+    "AccessKey" : {
+      "Value" : { "Ref" : "CFNKeys" },
+      "Description" : "AWSAccessKeyId of new user"
+    },
+    "SecretKey" : {
+      "Value" : { "Fn::GetAtt" : ["CFNKeys", "SecretAccessKey"]},
+      "Description" : "AWSSecretKey of new user"
+    }
+  }
+}	
